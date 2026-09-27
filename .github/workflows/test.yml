@@ -1,0 +1,47 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  action-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the checksum-pinned analyzer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -I - "$GITHUB_WORKSPACE/action/run.py" "$RUNNER_TEMP/donmai-action" <<'PY'
+          import importlib.util
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          source = Path(sys.argv[1])
+          destination = Path(sys.argv[2])
+          destination.mkdir(mode=0o700, parents=True, exist_ok=True)
+          spec = importlib.util.spec_from_file_location("donmai_action", source)
+          if spec is None or spec.loader is None:
+              raise SystemExit("could not load the Action's analyzer installer")
+          action = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(action)
+          binary = action.install(destination)
+          version = subprocess.run(
+              [str(binary), "--version"], check=True, text=True,
+              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=10,
+          ).stdout.strip()
+          if action.VERSION not in version:
+              raise SystemExit("installed analyzer version does not match the Action pin")
+          with Path(os.environ["GITHUB_ENV"]).open("a", encoding="utf-8") as env_file:
+              env_file.write(f"DONMAI_ACTION_TEST_BINARY={binary.resolve()}\n")
+          print(f"Installed checksum-verified Donmai analyzer {action.VERSION}")
+          PY
+      - name: Run the 14 Action tests
+        run: python3 -I -m unittest discover -s action -v
