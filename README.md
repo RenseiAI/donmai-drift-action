@@ -14,7 +14,7 @@ jobs:
   drift:
     runs-on: ubuntu-latest
     steps:
-      - uses: RenseiAI/donmai-drift-action@REPLACE_WITH_REVIEWED_FULL_COMMIT_SHA
+      - uses: RenseiAI/donmai-drift-action@004ee04968c1543d6dfe1c36033b2bafb3326284
         with:
           comment: never
 ```
