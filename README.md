@@ -1,6 +1,6 @@
 # Donmai native drift check
 
-Analyze a pull request's complete diff without checking out or running its code. The Action downloads Donmai **v0.72.47**, verifies the archive against a SHA-256 embedded in [`action/run.py`](action/run.py), and runs `donmai arch assess --require-diff`. It produces a job summary, a check annotation, and, when permitted, a pull request comment.
+Analyze a pull request's complete diff without checking out or running its code. The Action downloads Donmai **v0.72.53**, verifies the archive against a SHA-256 embedded in [`action/run.py`](action/run.py), and runs `donmai arch assess --require-diff`. It produces a job summary, a check annotation, and, when permitted, a pull request comment.
 
 Use the Action from a `pull_request` workflow and pin it to a reviewed full commit SHA:
 
@@ -47,7 +47,7 @@ Comments and annotations contain only validated commit identity, policy, and loc
 
 ## Maintainer verification
 
-Run the local tests with an already verified v0.72.47 executable:
+Run the local tests with an already verified v0.72.53 executable:
 
 ```sh
 DONMAI_ACTION_TEST_BINARY=/path/to/donmai python3 -I -m unittest discover -s action -v
@@ -55,6 +55,6 @@ DONMAI_ACTION_TEST_BINARY=/path/to/donmai python3 -I -m unittest discover -s act
 
 The suite drives the real executable against a local fake `gh` transport: complete diff, gated diff, unavailable diff, missing patch, and hostile pull request text. Separate controls exercise the embedded checksum, archive links/traversal, event and commit identity, comment ownership/permission errors, annotation escaping, and the actual metadata launcher. The tests do not contact GitHub or post comments. The `test` workflow obtains its analyzer by calling this Action's own checksum-verifying installer before running all 14 tests.
 
-The production Action files remain the byte-exact files from the v0.72.48 Donmai release. The focused repository does not assert Marketplace availability or outside-organization adoption. For reports about vulnerabilities in the Donmai analyzer, follow [Donmai's public security policy](https://github.com/RenseiAI/donmai/blob/main/SECURITY.md).
+The initial Action files were sourced byte-exact from Donmai v0.72.48. This focused repository now maintains its Action files independently; its analyzer version and archive digests are pinned separately in `action/run.py`. The focused repository does not assert Marketplace availability or outside-organization adoption. For reports about vulnerabilities in the Donmai analyzer, follow [Donmai's public security policy](https://github.com/RenseiAI/donmai/blob/main/SECURITY.md).
 
 GitHub references: [composite Action metadata](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax), [least-privilege `GITHUB_TOKEN` permissions](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token), and [pull request workflow security](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target).
