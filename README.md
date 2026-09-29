@@ -14,7 +14,7 @@ jobs:
   drift:
     runs-on: ubuntu-latest
     steps:
-      - uses: RenseiAI/donmai-drift-action@004ee04968c1543d6dfe1c36033b2bafb3326284
+      - uses: RenseiAI/donmai-drift-action@a52d98dcee713278d505c482f3975695bf233e8e
         with:
           comment: never
 ```
